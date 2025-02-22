@@ -7,7 +7,15 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://task-management-applicat-7620d.web.app",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -83,12 +91,10 @@ async function run() {
         { _id: new ObjectId(id) },
         { $set: updatedTask }
       );
-     
+
       io.emit("taskUpdated", { _id: id, ...updatedTask });
       res.send(result);
     });
-
-    
 
     app.delete("/task/:id", async (req, res) => {
       const id = req.params.id;
