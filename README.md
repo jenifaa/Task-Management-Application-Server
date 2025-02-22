@@ -41,11 +41,12 @@ nodemon index.js
 The server should now be running at http://localhost:PORT.
 
 ## Technologies Used
-Node.js: JavaScript runtime for server-side development
-Express.js: Web framework for Node.js
-MongoDB: NoSQL database for storing task and user data
-dotenv: For managing environment variables securely
-Axios: For making HTTP requests
-CORS: For enabling cross-origin requests
-Nodemon: For automatically restarting the server during development
+
+- `Node.js`: JavaScript runtime for server-side development
+- `Express.js`: Web framework for Node.js
+- `MongoDB`: NoSQL database for storing task and user data
+- `doten`v: For managing environment variables securely
+- `Axios`: For making HTTP requests
+- `CORS`: For enabling cross-origin requests
+- `Nodemon`: For automatically restarting the server during development
 
