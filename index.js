@@ -4,7 +4,7 @@ const app = express();
 const cors = require("cors");
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 
 app.use(
