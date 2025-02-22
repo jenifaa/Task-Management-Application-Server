@@ -2,20 +2,22 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { createServer } = require("node:http");
-const { Server } = require("socket.io");
+// const { createServer } = require("node:http");
+// const { Server } = require("socket.io");
 // const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 
 app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://task-management-applicat-7620d.web.app",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
+  cors()
+  //   {
+  //   origin: [
+  //     "http://localhost:5173",
+  //     "https://task-management-applicat-7620d.web.app",
+  //   ],
+  //   methods: ["GET", "POST", "PUT", "DELETE"],
+  //   credentials: true,
+
+  // }
 );
 
 app.use(express.json());
@@ -31,17 +33,17 @@ const client = new MongoClient(uri, {
   },
 });
 
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://task-management-applicat-7620d.web.app",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  },
-});
+// const server = createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: [
+//       "http://localhost:5173",
+//       "https://task-management-applicat-7620d.web.app",
+//     ],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   },
+// });
 
 async function run() {
   try {
@@ -67,17 +69,23 @@ async function run() {
     app.post("/task", async (req, res) => {
       const task = req.body;
       const result = await taskCollection.insertOne(task);
-      io.emit("taskAdded", task);
+
       res.send(result);
     });
 
     app.get("/task", async (req, res) => {
-    
       const result = await taskCollection.find().toArray();
       res.send(result);
     });
+    // app.get("/taskAdded", async (req, res) => {
+    //   const email = req.params.email;
+    //   const query = { email: email };
+
+    //   const result = await taskCollection.find(query).toArray();
+    //   res.send(result);
+    // });
     app.get("/taskAdded", async (req, res) => {
-      const email = req.query.email; // Accept email as query param
+      const email = req.query.email;
       if (!email) return res.status(400).json({ message: "Email is required" });
 
       try {
@@ -97,28 +105,24 @@ async function run() {
         { $set: updatedTask }
       );
 
-      io.emit("taskUpdated", { _id: id, ...updatedTask });
+      // io.emit("taskUpdated", { _id: id, ...updatedTask });
       res.send(result);
     });
 
     app.delete("/task/:id", async (req, res) => {
       const id = req.params.id;
       const result = await taskCollection.deleteOne({ _id: new ObjectId(id) });
-      io.emit("taskDeleted", id);
+      // io.emit("taskDeleted", id);
       res.send(result);
     });
 
-    app.get("/", (req, res) => {
-      res.send("Task Manager is on work");
-    });
+    // io.on("connection", (socket) => {
+    //   console.log("a user connected");
 
-    io.on("connection", (socket) => {
-      console.log("a user connected");
-
-      socket.on("disconnect", () => {
-        console.log("user disconnected");
-      });
-    });
+    //   socket.on("disconnect", () => {
+    //     console.log("user disconnected");
+    //   });
+    // });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -130,7 +134,10 @@ async function run() {
 }
 
 run().catch(console.dir);
+app.get("/", (req, res) => {
+  res.send("Task Manager is on work");
+});
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Task Manager is working in port: ${port}`);
 });
