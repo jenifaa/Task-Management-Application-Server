@@ -71,12 +71,11 @@ async function run() {
       res.send(result);
     });
 
-    // app.get("/taskAdded", async (req, res) => {
-    //   const email = req.params.email;
-    //   const query = { email: email };
-    //   const result = await taskCollection.find(query).toArray();
-    //   res.send(result);
-    // });
+    app.get("/task", async (req, res) => {
+    
+      const result = await taskCollection.find().toArray();
+      res.send(result);
+    });
     app.get("/taskAdded", async (req, res) => {
       const email = req.query.email; // Accept email as query param
       if (!email) return res.status(400).json({ message: "Email is required" });
